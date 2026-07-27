@@ -7,7 +7,7 @@ from langgraph.prebuilt import create_react_agent
 
 load_dotenv()
 
-toolbox_url = "http://192.168.1.42:5001"
+toolbox_url = "http://192.168.0.39:5001"
 
 system_prompt = """
 You're helping answer questions about a music store database.
@@ -15,14 +15,23 @@ Always check the table list before writing any SQL.
 Don't guess a column name unless you've actually seen it come back from a tool.
 Once you run the query use the result to answer the question in plain English.
 """
+def extract_text(content):
+    # gemini 3.6 sometimes returns content as a list of pieces instead of plain text
+    # this just grabs the actual readable text and ignores the internal stuff
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "".join(
+            block.get("text", "") for block in content if isinstance(block, dict)
+        )
+    return str(content)
 
 async def ask_agent(question):
     async with ToolboxClient(toolbox_url) as toolbox:
         tools = toolbox.load_toolset()
 
         model = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash",
-            temperature=0,
+            model="gemini-3.6-flash",
         )
 
         agent = create_react_agent(model, tools, prompt=system_prompt)
@@ -41,7 +50,7 @@ async def ask_agent(question):
                     if sql:
                         sql_queries.append(sql)
 
-        final_answer = response["messages"][-1].content
+        final_answer = extract_text(response["messages"][-1].content)
 
         return {
             "answer": final_answer,
