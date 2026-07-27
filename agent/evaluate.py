@@ -21,16 +21,27 @@ async def run_evaluation():
 
         try:
             # actually ask the agent this question and wait for its answer
-            answer = await ask_agent(question)
-            print(f"answer: {answer}")
-            results.append({"question": question, "answer": answer})
+            result = await ask_agent(question)
+            print(f"answer: {result['answer']}")
+            print(f"sql used: {result['sql_queries']}")
+
+            results.append({
+                "question": question,
+                "answer": result["answer"],
+                "sql_queries": result["sql_queries"],
+            })
 
         except Exception as e:
             # if something breaks (like no server running yet) record that instead of crashing
             print(f"failed: {e}")
-            results.append({"question": question, "answer": None, "error": str(e)})
+            results.append({
+                "question": question,
+                "answer": None,
+                "sql_queries": [],
+                "error": str(e),
+            })
 
-    # write every question and answer out to a file so you have a record for later
+    # write every question, answer, and sql used out to a file so you have a record for later
     with open("results.json", "w") as f:
         json.dump(results, f, indent=2)
 

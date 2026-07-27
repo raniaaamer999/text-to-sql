@@ -7,8 +7,7 @@ from langgraph.prebuilt import create_react_agent
 
 load_dotenv()
 
-# TODO swap this for saadia's actual server url once she has it running
-toolbox_url = "http://127.0.0.1:5000"
+toolbox_url = "http://192.168.1.42:5001"
 
 system_prompt = """
 You're helping answer questions about a music store database.
@@ -18,7 +17,6 @@ Once you run the query use the result to answer the question in plain English.
 """
 
 async def ask_agent(question):
-    # opens a connection to the toolbox server and grabs whatever tools saadia set up
     async with ToolboxClient(toolbox_url) as toolbox:
         tools = toolbox.load_toolset()
 
@@ -30,11 +28,29 @@ async def ask_agent(question):
         agent = create_react_agent(model, tools, prompt=system_prompt)
 
         response = await agent.ainvoke({"messages": [("user", question)]})
-        return response["messages"][-1].content
+
+        # go through every message and pull out any sql the agent actually ran
+        sql_queries = []
+        for message in response["messages"]:
+            tool_calls = getattr(message, "tool_calls", None)
+            if tool_calls:
+                for call in tool_calls:
+                    args = call.get("args", {})
+                    # different tools name this differently, so check both common names
+                    sql = args.get("sql") or args.get("query")
+                    if sql:
+                        sql_queries.append(sql)
+
+        final_answer = response["messages"][-1].content
+
+        return {
+            "answer": final_answer,
+            "sql_queries": sql_queries,
+        }
 
 
 if __name__ == "__main__":
-    # quick manual test, swap this question to try different ones
     test_question = "Who are the top 5 selling artists?"
-    answer = asyncio.run(ask_agent(test_question))
-    print(answer)
+    result = asyncio.run(ask_agent(test_question))
+    print("answer:", result["answer"])
+    print("sql used:", result["sql_queries"])
