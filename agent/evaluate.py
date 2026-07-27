@@ -2,16 +2,17 @@ import asyncio
 import json
 from agent import ask_agent
 
-
-def load_test_questions():
-    # opens the test file and turns the json text into an actual python list
-    with open("test_queries.json") as f:
-        return json.load(f)
+# your test questions, right here now instead of a separate file
+questions = [
+    "who are our top 5 selling artists",
+    "how many customers do we have in brazil",
+    "what's the total revenue broken down by country",
+    "which employee has the most people reporting to them",
+    "how many rock tracks do we have",
+]
 
 
 async def run_evaluation():
-    # grab your fixed list of five questions
-    questions = load_test_questions()
     results = []
 
     # go through each question one at a time, keeping track of its number
