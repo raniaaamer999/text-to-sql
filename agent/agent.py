@@ -31,7 +31,7 @@ async def ask_agent(question):
         tools = toolbox.load_toolset()
 
         model = ChatGoogleGenerativeAI(
-            model="gemini-3.6-flash",
+            model="gemini-3.5-flash-lite",
         )
 
         agent = create_react_agent(model, tools, prompt=system_prompt)
