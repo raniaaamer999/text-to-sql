@@ -1,0 +1,24 @@
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from agent import ask_agent
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class Question(BaseModel):
+    question: str
+
+@app.post("/ask")
+async def ask(payload: Question):
+    result = await ask_agent(payload.question)
+    return result
+
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")

@@ -1,37 +1,37 @@
 [
   {
     "question": "who are our top 5 selling artists",
-    "answer": "The top 5 selling artists based on total sales revenue are:\n\n1. **Iron Maiden** \u2013 $138.60 (140 tracks sold)\n2. **U2** \u2013 $105.93 (107 tracks sold)\n3. **Metallica** \u2013 $90.09 (91 tracks sold)\n4. **Led Zeppelin** \u2013 $86.13 (87 tracks sold)\n5. **Lost** \u2013 $81.59 (41 video episodes sold)\n\n*(Note: If measured purely by total track quantity sold, **Os Paralamas Do Sucesso** takes the 5th spot with 45 tracks sold generating $44.55).*",
+    "answer": "Based on our sales data, your top 5 selling artists (by total tracks sold) are:\n\n1. **Iron Maiden** (140 tracks)\n2. **U2** (107 tracks)\n3. **Metallica** (91 tracks)\n4. **Led Zeppelin** (87 tracks)\n5. **Os Paralamas Do Sucesso** (45 tracks)",
     "sql_queries": [
-      "SELECT ar.ArtistId, ar.Name AS ArtistName, SUM(il.Quantity) AS TotalTracksSold, SUM(il.UnitPrice * il.Quantity) AS TotalRevenue FROM artist ar JOIN album al ON ar.ArtistId = al.ArtistId JOIN track t ON al.AlbumId = t.AlbumId JOIN invoiceline il ON t.TrackId = il.TrackId GROUP BY ar.ArtistId, ar.Name ORDER BY TotalRevenue DESC LIMIT 5;",
-      "SELECT ar.ArtistId, ar.Name AS ArtistName, SUM(il.Quantity) AS TotalTracksSold, SUM(il.UnitPrice * il.Quantity) AS TotalRevenue FROM artist ar JOIN album al ON ar.ArtistId = al.ArtistId JOIN track t ON al.AlbumId = t.AlbumId JOIN invoiceline il ON t.TrackId = il.TrackId GROUP BY ar.ArtistId, ar.Name ORDER BY TotalTracksSold DESC LIMIT 5;"
+      "SELECT \n    ar.Name AS ArtistName,\n    SUM(il.Quantity) AS TotalTracksSold\nFROM artist ar\nJOIN album al ON ar.ArtistId = al.ArtistId\nJOIN track t ON al.AlbumId = t.AlbumId\nJOIN invoiceline il ON t.TrackId = il.TrackId\nGROUP BY ar.ArtistId, ar.Name\nORDER BY TotalTracksSold DESC\nLIMIT 5;\n"
     ]
   },
   {
     "question": "how many customers do we have in brazil",
-    "answer": "We have 5 customers located in Brazil.",
+    "answer": "We have 5 customers in Brazil.",
     "sql_queries": [
-      "SELECT COUNT(*) AS CustomerCount FROM customer WHERE Country = 'Brazil';"
+      "SELECT COUNT(*) FROM customer WHERE Country = 'Brazil'"
     ]
   },
   {
     "question": "what's the total revenue broken down by country",
-    "answer": "Here is the breakdown of total revenue by country, sorted from highest to lowest:\n\n| Country | Total Revenue |\n| :--- | :--- |\n| **USA** | $523.06 |\n| **Canada** | $303.96 |\n| **France** | $195.10 |\n| **Brazil** | $190.10 |\n| **Germany** | $156.48 |\n| **United Kingdom** | $112.86 |\n| **Czech Republic** | $90.24 |\n| **Portugal** | $77.24 |\n| **India** | $75.26 |\n| **Chile** | $46.62 |\n| **Ireland** | $45.62 |\n| **Hungary** | $45.62 |\n| **Austria** | $42.62 |\n| **Finland** | $41.62 |\n| **Netherlands** | $40.62 |\n| **Norway** | $39.62 |\n| **Sweden** | $38.62 |\n| **Argentina** | $37.62 |\n| **Australia** | $37.62 |\n| **Belgium** | $37.62 |\n| **Denmark** | $37.62 |\n| **Italy** | $37.62 |\n| **Poland** | $37.62 |\n| **Spain** | $37.62 |\n\n**Total overall revenue across all countries:** $2,328.60",
+    "answer": "Here is the total revenue broken down by country, ordered from highest to lowest:\n\n1. **USA**: $523.06\n2. **Canada**: $303.96\n3. **France**: $195.10\n4. **Brazil**: $190.10\n5. **Germany**: $156.48\n6. **United Kingdom**: $112.86\n7. **Czech Republic**: $90.24\n8. **Portugal**: $77.24\n9. **India**: $75.26\n10. **Chile**: $46.62\n11. **Ireland**: $45.62\n12. **Hungary**: $45.62\n13. **Austria**: $42.62\n14. **Finland**: $41.62\n15. **Netherlands**: $40.62\n16. **Norway**: $39.62\n17. **Sweden**: $38.62\n18. **Belgium**: $37.62\n19. **Australia**: $37.62\n20. **Spain**: $37.62\n21. **Denmark**: $37.62\n22. **Italy**: $37.62\n23. **Poland**: $37.62\n24. **Argentina**: $37.62",
     "sql_queries": [
-      "SELECT BillingCountry AS Country, SUM(Total) AS TotalRevenue FROM invoice GROUP BY BillingCountry ORDER BY TotalRevenue DESC",
-      "SELECT c.Country, SUM(i.Total) AS TotalRevenue FROM invoice i JOIN customer c ON i.CustomerId = c.CustomerId GROUP BY c.Country ORDER BY TotalRevenue DESC"
+      "SELECT \n    BillingCountry AS Country, \n    SUM(Total) AS TotalRevenue \nFROM invoice \nGROUP BY BillingCountry \nORDER BY TotalRevenue DESC;"
     ]
   },
   {
     "question": "which employee has the most people reporting to them",
-    "answer": null,
-    "sql_queries": [],
-    "error": "Error calling model 'gemini-3.6-flash' (RESOURCE_EXHAUSTED): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 4.041195902s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.6-flash', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '4s'}]}}"
+    "answer": "The employee with the most people reporting to them is **Nancy Edwards** (Sales Manager), who has 3 direct reports.",
+    "sql_queries": [
+      "SELECT \n    m.FirstName, \n    m.LastName, \n    m.Title,\n    COUNT(e.EmployeeId) AS DirectReportsCount\nFROM employee e\nJOIN employee m ON e.ReportsTo = m.EmployeeId\nGROUP BY m.EmployeeId, m.FirstName, m.LastName, m.Title\nORDER BY DirectReportsCount DESC\nLIMIT 1;"
+    ]
   },
   {
     "question": "how many rock tracks do we have",
-    "answer": null,
-    "sql_queries": [],
-    "error": "Error calling model 'gemini-3.6-flash' (RESOURCE_EXHAUSTED): 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash\\nPlease retry in 27.225273157s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.6-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '27s'}]}}"
+    "answer": "There are 1,297 rock tracks in the database.",
+    "sql_queries": [
+      "SELECT COUNT(*) FROM track t JOIN genre g ON t.GenreId = g.GenreId WHERE g.Name = 'Rock';"
+    ]
   }
 ]
